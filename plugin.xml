@@ -10,7 +10,7 @@
       </category>
       <view
             name="Jenkins View"
-            icon="icons/sample.gif"
+            icon="icons/jenkins.gif"
             category="JenkinsViewer"
             class="jenkinsviewer.views.JenkinsView"
             id="jenkinsviewer.views.JenkinsView">
@@ -33,6 +33,20 @@
       <contexts
             file="contexts.xml">
       </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="jenkinsviewer.preferences.JenkinsViewerPreferencePage"
+            id="jenkinsviewer.preferences.JenkinsViewerPreferencePage"
+            name="Jenkins Viewer">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="jenkinsviewer.preferences.PreferenceInitializer">
+      </initializer>
    </extension>
 
 </plugin>

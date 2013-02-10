@@ -18,11 +18,15 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import jenkinsviewer.Activator;
+import jenkinsviewer.preferences.PreferenceConstants;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
 import org.eclipse.ui.part.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
@@ -84,7 +88,9 @@ public class JenkinsView extends ViewPart {
 			
 			Map<Node, Map<String, String>> result = new HashMap<Node, Map<String, String>>();
 			try {
-				URL url = new URL("http://localhost:8080/jenkins/api/xml?depth=2");
+				IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+				String p_url = store.getString(PreferenceConstants.P_URL);
+				URL url = new URL(p_url + "/api/xml?depth=2");
 				DocumentBuilder builder = DocumentBuilderFactory.newInstance()
 				        .newDocumentBuilder();
 				Document doc = builder.parse(url.openStream());
