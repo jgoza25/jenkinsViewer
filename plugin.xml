@@ -10,7 +10,7 @@
       </category>
       <view
             name="Jenkins View"
-            icon="icons/jenkins.gif"
+            icon="icons/jenkins.png"
             category="JenkinsViewer"
             class="jenkinsviewer.views.JenkinsView"
             id="jenkinsviewer.views.JenkinsView">
