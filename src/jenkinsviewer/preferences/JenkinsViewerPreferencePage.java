@@ -41,10 +41,12 @@ public class JenkinsViewerPreferencePage
 		
 		IntegerFieldEditor field = new IntegerFieldEditor(
 				PreferenceConstants.P_INTERVAL,
-				"&Interval",
+				"&Interval(min):",
 				getFieldEditorParent());
 		field.setValidRange(1, 100);
 		addField(field);
+		addField(new StringFieldEditor(PreferenceConstants.P_FILTER, 
+				"&Job Filter:", getFieldEditorParent()));
 	}
 
 	/* (non-Javadoc)

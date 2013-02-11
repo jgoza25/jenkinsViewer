@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -132,8 +133,10 @@ public class JenkinsView extends ViewPart {
 				while (true) {
 					cacheElements();
 					Display.getDefault().asyncExec(new InnerTimerThread());
+					IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+					int interval = store.getInt(PreferenceConstants.P_INTERVAL);
 					try {
-						Thread.sleep(10 * 1000);
+						Thread.sleep(interval * 1000);
 					} catch (InterruptedException e) {
 					}
 				}
@@ -145,6 +148,7 @@ public class JenkinsView extends ViewPart {
 	
 	public void cacheElements() {
 		try {
+			result.clear();
 			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 			String p_url = store.getString(PreferenceConstants.P_URL);
 			URL url = new URL(p_url + "/api/xml?depth=2");
@@ -187,8 +191,19 @@ public class JenkinsView extends ViewPart {
 	        	} else {
 	        		job.put(n.getNodeName(), String.format("%dƒ–ŒŽ‘O", sec / 60 / 60 / 24 / 30));
 	        	}
-	        	result.put(n.getParentNode().getParentNode(), job);
 	        }
+			String p_filter = store.getString(PreferenceConstants.P_FILTER);
+			
+			if (p_filter.contains("=")) {
+		        String f_key = p_filter.substring(0, p_filter.indexOf("="));
+		        String f_value = p_filter.substring(p_filter.indexOf("=") + 1);
+		        for (Entry<Node, Map<String, String>> entity : result.entrySet()) {
+		        	if (entity.getValue().get(f_key) != null && !entity.getValue().get(f_key).matches(f_value)) {
+		        		result.remove(entity.getKey());
+		        	}
+		        }
+			}
+	        
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
