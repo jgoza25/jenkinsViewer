@@ -158,39 +158,33 @@ public class JenkinsView extends ViewPart {
 			XPathFactory factory = XPathFactory.newInstance();
 			XPath xpath = factory.newXPath();
 			NodeList entries = (NodeList) xpath.evaluate(
-					"/hudson/job/*", doc, XPathConstants.NODESET );
-
-	        for( int i = 0; i < entries.getLength(); i++ ) {
-	        	Node n = entries.item(i);
-	        	Map<String, String> job = result.get(n.getParentNode());
-	        	if (job == null) { 
-	        		job = new HashMap<String, String>();
-	        	}
-	        	job.put(n.getNodeName(), n.getTextContent());
-	        	result.put(n.getParentNode(), job);
-	        }
-	        entries = (NodeList) xpath.evaluate(
 	                "/hudson/job/build[1]/timestamp", doc, XPathConstants.NODESET );
 	        for( int i = 0; i < entries.getLength(); i++ ) {
-	        	Node n = entries.item(i);
-	        	Map<String, String> job = result.get(n.getParentNode().getParentNode());
-	        	if (job == null) { 
-	        		job = new HashMap<String, String>();
+	        	Node jobNode = entries.item(i).getParentNode().getParentNode();
+        		Map<String, String> job = result.get(jobNode);
+        		if (job == null) { 
+        			job = new HashMap<String, String>();
+        		}
+        		job.put("timestamp", entries.item(i).getTextContent());
+	        	for (int j = 0; j < jobNode.getChildNodes().getLength(); j++) {
+	        		Node n = jobNode.getChildNodes().item(j);
+	        		job.put(n.getNodeName(), n.getTextContent());
 	        	}
-	        	Date execed = new Date(Long. parseLong(n.getTextContent()));
+	        	Date execed = new Date(Long. parseLong(job.get("timestamp")));
 	        	long sec = ((new Date()).getTime() - execed.getTime()) / 1000;
 	        	
 	        	if (sec < 60) {
-	        		job.put(n.getNodeName(), "たった今");
+	        		job.put("timestamp", "たった今");
 	        	} else if (sec < 60 * 60) {
-	        		job.put(n.getNodeName(), String.format("%d分前", sec / 60));
+	        		job.put("timestamp", String.format("%d分前", sec / 60));
 	        	} else if (sec < 60 * 60 * 24) {
-	        		job.put(n.getNodeName(), String.format("%d時間前", sec / 60 / 60));
+	        		job.put("timestamp", String.format("%d時間前", sec / 60 / 60));
 	        	} else if (sec < 60 * 60 * 24 * 30) {
-	        		job.put(n.getNodeName(), String.format("%d日前", sec / 60 / 60 / 24));
+	        		job.put("timestamp", String.format("%d日前", sec / 60 / 60 / 24));
 	        	} else {
-	        		job.put(n.getNodeName(), String.format("%dヶ月前", sec / 60 / 60 / 24 / 30));
+	        		job.put("timestamp", String.format("%dヶ月前", sec / 60 / 60 / 24 / 30));
 	        	}
+	        	result.put(jobNode, job);
 	        }
 			String p_filter = store.getString(PreferenceConstants.P_FILTER);
 			
@@ -233,7 +227,6 @@ public class JenkinsView extends ViewPart {
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "JenkinsViewer.viewer");
 		hookDoubleClickAction();
-		doTimer();
 	}
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
