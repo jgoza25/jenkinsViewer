@@ -99,13 +99,13 @@ public class JenkinsView extends ViewPart {
 			Map<String, String> job = (Map<String, String>)obj;
 			String color = job.get("color");
 			ImageDescriptor id = null;
-			if (color.matches("blue")) {
+			if (color.startsWith("blue")) {
 				id = Activator.getImageDescriptor("icons/blue.png");
 			}
-			if (color.matches("red")) {
+			if (color.startsWith("red")) {
 				id = Activator.getImageDescriptor("icons/red.png");
 			}
-			if (color.matches("yellow")) {
+			if (color.startsWith("yellow")) {
 				id = Activator.getImageDescriptor("icons/yellow.png");
 			}
 			if (id == null) {
@@ -136,7 +136,7 @@ public class JenkinsView extends ViewPart {
 					IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 					int interval = store.getInt(PreferenceConstants.P_INTERVAL);
 					try {
-						Thread.sleep(interval * 1000);
+						Thread.sleep(interval * 60 * 1000);
 					} catch (InterruptedException e) {
 					}
 				}
@@ -165,25 +165,11 @@ public class JenkinsView extends ViewPart {
         		if (job == null) { 
         			job = new HashMap<String, String>();
         		}
-        		job.put("timestamp", entries.item(i).getTextContent());
 	        	for (int j = 0; j < jobNode.getChildNodes().getLength(); j++) {
 	        		Node n = jobNode.getChildNodes().item(j);
 	        		job.put(n.getNodeName(), n.getTextContent());
 	        	}
-	        	Date execed = new Date(Long. parseLong(job.get("timestamp")));
-	        	long sec = ((new Date()).getTime() - execed.getTime()) / 1000;
-	        	
-	        	if (sec < 60) {
-	        		job.put("timestamp", "たった今");
-	        	} else if (sec < 60 * 60) {
-	        		job.put("timestamp", String.format("%d分前", sec / 60));
-	        	} else if (sec < 60 * 60 * 24) {
-	        		job.put("timestamp", String.format("%d時間前", sec / 60 / 60));
-	        	} else if (sec < 60 * 60 * 24 * 30) {
-	        		job.put("timestamp", String.format("%d日前", sec / 60 / 60 / 24));
-	        	} else {
-	        		job.put("timestamp", String.format("%dヶ月前", sec / 60 / 60 / 24 / 30));
-	        	}
+	        	job.put("timestamp", getElapsedTime(entries.item(i).getTextContent()));
 	        	result.put(jobNode, job);
 	        }
 			String p_filter = store.getString(PreferenceConstants.P_FILTER);
@@ -203,8 +189,27 @@ public class JenkinsView extends ViewPart {
 		}
 		return;
 	}
-
-
+	
+	private String getElapsedTime(String timestamp) {
+    	Date elapsed = new Date(Long.parseLong(timestamp));
+    	long sec = ((new Date()).getTime() - elapsed.getTime()) / 1000;
+    	
+    	if (sec < 60) {
+    		return "Just now";
+    	} else if (sec < 60 * 60) {
+    		int mins = (int) (sec / 60);
+    		return String.format("%dmin", mins) + (mins == 1 ? "" : "s");
+    	} else if (sec < 60 * 60 * 24) {
+    		int hours = (int) (sec / 60 / 60);
+    		return String.format("%dhr", hours) + (hours == 1 ? "" : "s");
+    	} else if (sec < 60 * 60 * 24 * 30) {
+    		int days = (int) (sec / 60 / 60 / 24);
+    		return String.format("%dday", days) + (days == 1 ? "" : "s");
+    	} else {
+    		int months = (int) (sec / 60 / 60 / 24 / 30);
+    		return String.format("%dmonth", months) + (months == 1 ? "" : "s");
+    	}
+	}
 	// タイマー内で使われる内部スレッドクラス
 	class InnerTimerThread implements Runnable {
 		public void run() {
