@@ -8,10 +8,11 @@
 **特徴**
 * 邪魔にならない。必要な情報のみをコンパクトにビューにまとめました。
 * ジョブをフィルターできる。監視したいジョブのみを表示できるようにフィルター機能を用意しました。
+* ダブルクリックにより、すばやくブラウザを起動しJenkinsにアクセスできます。
 
 ## ダウンロード
 
-最新バージョン　0.2 [JenkinsViewer_0.2.0.201302162217.jar](https://github.com/jgoza25/jenkinsViewer/raw/master/dist/JenkinsViewer_0.2.0.201302162217.jar)
+最新バージョン　[JenkinsViewer_0.2.0.201302162217.jar](https://github.com/jgoza25/jenkinsViewer/raw/master/dist/JenkinsViewer_0.2.0.201302162217.jar)
 
 ## 使い方
 
@@ -33,7 +34,7 @@
 ### フィルター
 フィルター機能を使えば様々なジョブを表示できます。
 
-1. ジョブ名でフィルターする
+#### ジョブ名でフィルターする
 
 name=[job名]
 
@@ -42,9 +43,10 @@ job名に正規表現の利用可能。
 * 例）intraから始まるジョブだけを表示したい場合　`name=intra.*1` 
 * 例）job1, job2だけを表示したい場合 `name=job1|job2`
 
-2. ビルド結果でフィルターする
+#### ビルド結果でフィルターする
 
 result=[ビルド結果]
 
 * 例）失敗したビルドだけを表示したい場合 `result=FAILURE`
+
 
