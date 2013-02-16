@@ -93,7 +93,7 @@ public class JenkinsView extends ViewPart {
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			Map<String, String> job = (Map<String, String>)obj;
-			return getText(job.get("name") + "  " + job.get("timestamp"));
+			return getText(job.get("name") + "  " + job.get("elapsed"));
 		}
 		public Image getColumnImage(Object obj, int index) {
 			Map<String, String> job = (Map<String, String>)obj;
@@ -169,7 +169,12 @@ public class JenkinsView extends ViewPart {
 	        		Node n = jobNode.getChildNodes().item(j);
 	        		job.put(n.getNodeName(), n.getTextContent());
 	        	}
-	        	job.put("timestamp", getElapsedTime(entries.item(i).getTextContent()));
+	        	jobNode = entries.item(i).getParentNode();
+	        	for (int j = 0; j < jobNode.getChildNodes().getLength(); j++) {
+	        		Node n = jobNode.getChildNodes().item(j);
+	        		job.put(n.getNodeName(), n.getTextContent());
+	        	}
+	        	job.put("elapsed", getElapsedTime(job.get("timestamp")));
 	        	result.put(jobNode, job);
 	        }
 			String p_filter = store.getString(PreferenceConstants.P_FILTER);
