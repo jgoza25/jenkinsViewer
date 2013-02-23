@@ -120,6 +120,7 @@ public class JenkinsView extends ViewPart {
 	}
 	
 	private static Map<Node,Map<String,String>> result = new ConcurrentHashMap<Node, Map<String, String>>();
+	public static transient boolean pref = false;
 
 	// タイマーの実行メソッド
 	public void doTimer() {
@@ -130,10 +131,14 @@ public class JenkinsView extends ViewPart {
 					Display.getDefault().asyncExec(new InnerTimerThread());
 					IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 					int interval = store.getInt(PreferenceConstants.P_INTERVAL);
-					try {
-						Thread.sleep(interval * 60 * 1000);
-					} catch (InterruptedException e) {
+					for (int i = 0; i < interval * 60 * 2; i++) {
+						if (pref) break;
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e) {
+						}
 					}
+					pref = false;
 				}
 			};
 		};
@@ -172,22 +177,26 @@ public class JenkinsView extends ViewPart {
 	        	job.put("elapsed", getElapsedTime(job.get("timestamp")));
 	        	result.put(jobNode, job);
 	        }
-			String p_filter = store.getString(PreferenceConstants.P_FILTER);
+			filter(store.getString(PreferenceConstants.P_FILTER1));
+			filter(store.getString(PreferenceConstants.P_FILTER2));
+			filter(store.getString(PreferenceConstants.P_FILTER3));
 			
-			if (p_filter.contains("=")) {
-		        String f_key = p_filter.substring(0, p_filter.indexOf("="));
-		        String f_value = p_filter.substring(p_filter.indexOf("=") + 1);
-		        for (Entry<Node, Map<String, String>> entity : result.entrySet()) {
-		        	if (entity.getValue().get(f_key) != null && !entity.getValue().get(f_key).matches(f_value)) {
-		        		result.remove(entity.getKey());
-		        	}
-		        }
-			}
-	        
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return;
+	}
+	
+	private void filter(String p_filter) {
+		if (p_filter.contains("=")) {
+	        String f_key = p_filter.substring(0, p_filter.indexOf("="));
+	        String f_value = p_filter.substring(p_filter.indexOf("=") + 1);
+	        for (Entry<Node, Map<String, String>> entity : result.entrySet()) {
+	        	if (entity.getValue().get(f_key) != null && !entity.getValue().get(f_key).matches(f_value)) {
+	        		result.remove(entity.getKey());
+	        	}
+	        }
+		}
 	}
 	
 	private String getElapsedTime(String timestamp) {

@@ -4,6 +4,7 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import jenkinsviewer.Activator;
+import jenkinsviewer.views.JenkinsView;
 
 /**
  * This class represents a preference page that
@@ -45,7 +46,11 @@ public class JenkinsViewerPreferencePage
 				getFieldEditorParent());
 		field.setValidRange(1, 100);
 		addField(field);
-		addField(new StringFieldEditor(PreferenceConstants.P_FILTER, 
+		addField(new StringFieldEditor(PreferenceConstants.P_FILTER1, 
+				"&Job Filter:", getFieldEditorParent()));
+		addField(new StringFieldEditor(PreferenceConstants.P_FILTER2, 
+				"&Job Filter:", getFieldEditorParent()));
+		addField(new StringFieldEditor(PreferenceConstants.P_FILTER3, 
 				"&Job Filter:", getFieldEditorParent()));
 	}
 
@@ -53,6 +58,12 @@ public class JenkinsViewerPreferencePage
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
+	}
+	
+	@Override
+	public boolean performOk() {
+		JenkinsView.pref = true;
+		return super.performOk();
 	}
 	
 }
