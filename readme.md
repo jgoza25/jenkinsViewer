@@ -12,7 +12,7 @@
 
 ## ダウンロード
 
-最新バージョン　[JenkinsViewer_0.2.0.201302162217.jar](https://github.com/jgoza25/jenkinsViewer/raw/master/dist/JenkinsViewer_0.2.0.201302162217.jar)
+最新バージョン　[JenkinsViewer_0.2.0.201302162217.jar](http://tin.li/ldd)
 
 ## 使い方
 
