@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/JenkinsViewer.Feature_3.0.0.201302272219.jar" id="JenkinsViewer.Feature" version="3.0.0.201302272219"/>
+</site>
